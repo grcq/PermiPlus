@@ -1,0 +1,5 @@
+name: PermiPlus
+version: '${project.version}'
+main: dev.grcq.permiplus.PermiPlus
+authors: [grcq]
+website: https://grcq.dev/
