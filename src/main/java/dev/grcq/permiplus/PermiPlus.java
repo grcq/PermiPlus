@@ -1,8 +1,10 @@
 package dev.grcq.permiplus;
 
+import cf.grcq.priveapi.PriveAPIS;
 import cf.grcq.priveapi.chat.listener.InputListener;
 import cf.grcq.priveapi.command.CommandHandler;
 import cf.grcq.priveapi.gui.listener.GUIListener;
+import cf.grcq.startup.priveapi.Spigot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.LongSerializationPolicy;
@@ -17,6 +19,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.lang.reflect.Field;
 
 public final class PermiPlus extends JavaPlugin {
 
@@ -55,7 +58,6 @@ public final class PermiPlus extends JavaPlugin {
 
         this.groupHandler = new GroupHandler();
 
-        CommandHandler.init();
         CommandHandler.registerParameter(ChatColor.class, new ChatColorParameterType());
         CommandHandler.registerParameter(Group.class, new GroupParameterType());
         CommandHandler.registerAll(this);

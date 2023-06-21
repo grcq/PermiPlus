@@ -52,7 +52,10 @@ public class GroupHandler {
     public Group getGroup(int id) {
         return CompletableFuture.supplyAsync(() -> {
             ResultSet rs = mySQL.execute("SELECT * FROM groups WHERE id=" + id + ";", new HashMap<>());
-            JsonObject object = (JsonObject) mySQL.toJson(rs).get(0);
+            JsonArray array = mySQL.toJson(rs);
+            if (array == null || array.size() == 0) return null;
+
+            JsonObject object = (JsonObject) array.get(0);
             if (object == null) return null;
 
             return PermiPlus.GSON.fromJson(object, Group.class);
@@ -64,7 +67,10 @@ public class GroupHandler {
     public Group getGroup(String name) {
         return CompletableFuture.supplyAsync(() -> {
             ResultSet rs = mySQL.execute("SELECT * FROM groups WHERE name='" + name + "';", new HashMap<>());
-            JsonObject object = (JsonObject) mySQL.toJson(rs).get(0);
+            JsonArray array = mySQL.toJson(rs);
+            if (array == null || array.size() == 0) return null;
+
+            JsonObject object = (JsonObject) array.get(0);
             if (object == null) return null;
 
             return PermiPlus.GSON.fromJson(object, Group.class);
