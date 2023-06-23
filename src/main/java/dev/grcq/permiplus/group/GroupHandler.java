@@ -30,6 +30,7 @@ public class GroupHandler {
     }
 
     private boolean loadGroups() {
+        this.groups.clear();
         ResultSet rs = mySQL.execute("SELECT * FROM groups;", new HashMap<>());
         JsonArray array = mySQL.toJson(rs);
 
@@ -90,6 +91,10 @@ public class GroupHandler {
 
     public boolean exists(String name) {
         return getGroup(name) != null;
+    }
+
+    public void update() {
+        this.loadGroups();
     }
 
 }

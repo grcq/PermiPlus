@@ -34,7 +34,7 @@ public class MainCommands {
     }
 
     @Command(names = {"permi group create"})
-    public static void groupCreate(CommandSender sender, @Param(name = "name") String name, @Param(name = "colour", defaultValue = "WHITE") ChatColor colour) {
+    public static void groupCreate(CommandSender sender, @Param(name = "name") String name) {
         GroupHandler groupHandler = PermiPlus.getInstance().getGroupHandler();
 
         if (groupHandler.exists(name)) {
@@ -43,9 +43,10 @@ public class MainCommands {
         }
 
         Group group = groupHandler.createGroup(name);
-        group.setColour("&" + colour.getChar());
+        group.setColour("&f");
 
-        sender.sendMessage(Util.format("&aSuccess! The group '%s' was successfully created.".formatted(colour + name.toLowerCase())));
+        sender.sendMessage(Util.format("&aSuccess! The group '&f%s&a' was successfully created.".formatted(name.toLowerCase())));
+        groupHandler.update();
     }
 
     @Command(names = {"permi group list"})

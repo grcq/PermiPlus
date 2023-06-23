@@ -13,6 +13,9 @@ import dev.grcq.permiplus.commands.parameters.GroupParameterType;
 import dev.grcq.permiplus.database.MySQL;
 import dev.grcq.permiplus.group.Group;
 import dev.grcq.permiplus.group.GroupHandler;
+import dev.grcq.permiplus.listeners.JoinListener;
+import dev.grcq.permiplus.listeners.api.EventHandler;
+import dev.grcq.permiplus.listeners.api.EventListener;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.ChatColor;
@@ -64,6 +67,8 @@ public final class PermiPlus extends JavaPlugin {
 
         this.getServer().getPluginManager().registerEvents(new GUIListener(), this);
         this.getServer().getPluginManager().registerEvents(new InputListener(), this);
+        EventHandler eventListener = new EventHandler();
+        eventListener.register(JoinListener.class);
 
         this.getDataFolder().mkdirs();
         File file = new File(this.getDataFolder(), "data.yml");
