@@ -36,9 +36,24 @@ public class GroupHandler {
 
         if (array.size() == 0) return false;
 
+        List<JsonObject> objects = new ArrayList<>();
+        for (JsonElement jsonElement : array) {
+            JsonObject object = (JsonObject) jsonElement;
+
+            rs = mySQL.execute("SELECT * FROM profile_parents WHERE name='" + object.get("name").getAsInt() + "';", new HashMap<>());
+            JsonArray parents = mySQL.toJson(rs);
+
+            rs = mySQL.execute("SELECT * FROM profile_permissions WHERE name='" + object.get("name").getAsInt() + "';", new HashMap<>());
+            JsonArray perms = mySQL.toJson(rs);
+
+            object.add("permissions", perms);
+            object.add("parents", parents);
+
+            objects.add(object);
+        }
+
         CompletableFuture.runAsync(() -> {
-            for (JsonElement jsonElement : array) {
-                JsonObject object = (JsonObject) jsonElement;
+            for (JsonObject object : objects) {
                 Group group = PermiPlus.GSON.fromJson(object, Group.class);
 
                 this.groups.add(group);
@@ -46,21 +61,6 @@ public class GroupHandler {
         });
 
         return true;
-    }
-
-    @SneakyThrows
-    @Nullable
-    public Group getGroup(int id) {
-        return CompletableFuture.supplyAsync(() -> {
-            ResultSet rs = mySQL.execute("SELECT * FROM groups WHERE id=" + id + ";", new HashMap<>());
-            JsonArray array = mySQL.toJson(rs);
-            if (array == null || array.size() == 0) return null;
-
-            JsonObject object = (JsonObject) array.get(0);
-            if (object == null) return null;
-
-            return PermiPlus.GSON.fromJson(object, Group.class);
-        }).get();
     }
 
     @SneakyThrows
@@ -74,6 +74,15 @@ public class GroupHandler {
             JsonObject object = (JsonObject) array.get(0);
             if (object == null) return null;
 
+            rs = mySQL.execute("SELECT * FROM group_parents WHERE name='" + name + "';", new HashMap<>());
+            JsonArray parents = mySQL.toJson(rs);
+
+            rs = mySQL.execute("SELECT * FROM group_permissions WHERE name='" + name + "';", new HashMap<>());
+            JsonArray perms = mySQL.toJson(rs);
+
+            object.add("permissions", perms);
+            object.add("parents", parents);
+
             return PermiPlus.GSON.fromJson(object, Group.class);
         }).get();
     }
@@ -83,10 +92,6 @@ public class GroupHandler {
         Group group = new Group(name, name.toLowerCase(), "", "");
         mySQL.update("INSERT INTO groups (name, displayName) VALUES ('%s', '%s');".formatted(name, name.toLowerCase()));
         return group;
-    }
-
-    public boolean exists(int id) {
-        return getGroup(id) != null;
     }
 
     public boolean exists(String name) {

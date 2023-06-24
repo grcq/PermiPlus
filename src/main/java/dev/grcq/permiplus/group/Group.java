@@ -6,6 +6,7 @@ import dev.grcq.permiplus.database.MySQL;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +19,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class Group {
 
-    private int id;
     @NotNull
     private String displayName;
     @NotNull
@@ -35,14 +35,27 @@ public class Group {
     @NotNull
     private final List<String> permissions = new ArrayList<>();
     @NotNull
-    private final List<String> parentIds = new ArrayList<>();
+    private final List<String> parents = new ArrayList<>();
 
-
+    @SneakyThrows
     public void save() {
         MySQL mySQL = PermiPlus.getInstance().getMySQL();
 
-        mySQL.update("UPDATE groups SET displayName='" + displayName + "', name='" + name + "', prefix='" + prefix +
-                "', suffix='" + suffix + "', colour=" + (colour != null ? "'" + colour + "'" : "null") + ", priority=" + priority + " WHERE id=" + id);
+        mySQL.update("UPDATE groups SET displayName='" + displayName + "', prefix='" + prefix +
+                "', suffix='" + suffix + "', colour=" + (colour != null ? "'" + colour + "'" : "NULL") + ", priority=" + priority +
+                " WHERE name='" + name + "'");
+
+        mySQL.update("DELETE FROM group_permissions WHERE group='%s'".formatted(name));
+        mySQL.update("DELETE FROM group_parents WHERE group='%s'".formatted(name));
+
+        for (String parent : parents) {
+            mySQL.update("INSERT INTO group_parents (group, parent) VALUES ('%s', '%s')".formatted(name, parent));
+        }
+
+        for (String perm : permissions) {
+            mySQL.update("INSERT INTO group_permissions(group, permission) VALUES ('%s', '%s')".formatted(name, perm));
+        }
+
     }
 
 }

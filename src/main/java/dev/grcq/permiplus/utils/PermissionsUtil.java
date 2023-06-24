@@ -1,48 +1,44 @@
 package dev.grcq.permiplus.utils;
 
+import com.google.common.collect.Lists;
 import dev.grcq.permiplus.PermiPlus;
+import dev.grcq.permiplus.group.Group;
+import dev.grcq.permiplus.profile.Profile;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @UtilityClass
 public class PermissionsUtil {
 
-    private static Map<Player, PermissionAttachment> permissions = new HashMap<>();
+    private static final Map<UUID, PermissionAttachment> attachments = new HashMap<>();
 
-    public static void addPermission(Player player, Permission permission) {
-        if (!permissions.containsKey(player)) {
-            permissions.put(player, player.addAttachment(PermiPlus.getInstance()));
-        }
+    public static void updatePermissions(Player player){
+        try {
+            try {
+                if (getAttachment(player) != null) player.removeAttachment(getAttachment(player));
+            } catch (IllegalArgumentException ignored) {}
+            PermissionAttachment attachment = player.addAttachment(PermiPlus.getInstance());
 
-        PermissionAttachment attachment = permissions.get(player);
-        attachment.setPermission(permission, true);
+            List<String> permissions = Lists.newArrayList(PermiPlus.getInstance().getProfileHandler().getProfile(player.getUniqueId()).getPermissions());
+            for (String permission : permissions) {
+                attachment.setPermission((permission.startsWith("-") ? permission.substring(1) : permission), !permission.startsWith("-"));
+            }
+            attachments.put(player.getUniqueId(), attachment);
+            player.recalculatePermissions();
+        }catch(ConcurrentModificationException ignored){}
     }
 
-    public static void addPermission(Player player, String permission) {
-        addPermission(player, new Permission(permission));
+    public static PermissionAttachment getAttachment(Player player){
+        return attachments.getOrDefault(player.getUniqueId(), null);
     }
 
-    public static void removePermission(Player player, Permission permission) {
-
-    }
-
-    public static void removePermission(Player player, String permission) {
-        removePermission(player, new Permission(permission));
-    }
-
-    public static void clear() {
-        for (Map.Entry<Player, PermissionAttachment> ppae : permissions.entrySet()) {
-            ppae.getValue().remove();
-        }
-
-        permissions.clear();
+    public static void remove(Player player){
+        attachments.remove(player.getUniqueId());
     }
 
 }

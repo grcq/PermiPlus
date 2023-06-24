@@ -1,5 +1,7 @@
 package dev.grcq.permiplus.profile;
 
+import dev.grcq.permiplus.PermiPlus;
+import dev.grcq.permiplus.database.MySQL;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +34,25 @@ public class Profile {
     @NotNull
     public UUID getUUID() {
         return UUID.fromString(this.uuidString);
+    }
+
+    public void save() {
+        MySQL mySQL = PermiPlus.getInstance().getMySQL();
+
+        mySQL.update(
+                "UPDATE profiles SET username='%s', prefix=%s, suffix=%s WHERE uuid='%s'"
+                        .formatted(username, (prefix == null ? "NULL" : "'" + prefix + "'"), (suffix == null ? "NULL" : "'" + suffix + "'"), uuidString)
+        );
+
+        mySQL.update("DELETE FROM profile_permissions WHERE uuid='%s'".formatted(uuidString));
+        mySQL.update("DELETE FROM profile_parents WHERE uuid='%s'".formatted(uuidString));
+
+        for (String parent : parents) {
+            mySQL.update("INSERT INTO profile_parents (uuid, parent) VALUES ('%s', '%s')".formatted(uuidString, parent));
+        }
+
+        for (String perm : permissions) {
+            mySQL.update("INSERT INTO profile_permissions(uuid, permission) VALUES ('%s', '%s')".formatted(uuidString, perm));
+        }
     }
 }
