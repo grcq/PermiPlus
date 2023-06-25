@@ -11,14 +11,17 @@ import dev.grcq.permiplus.commands.parameters.GroupParameterType;
 import dev.grcq.permiplus.database.MySQL;
 import dev.grcq.permiplus.group.Group;
 import dev.grcq.permiplus.group.GroupHandler;
-import dev.grcq.permiplus.listeners.ConnectionListener;
+import dev.grcq.permiplus.inject.permissible.PermissibleInjector;
 import dev.grcq.permiplus.listeners.api.EventHandler;
+import dev.grcq.permiplus.inject.permissible.PermiPermissible;
 import dev.grcq.permiplus.profile.ProfileHandler;
-import dev.grcq.permiplus.utils.PermissionsUtil;
+import dev.grcq.permiplus.permission.PermissionHandler;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -36,6 +39,8 @@ public final class PermiPlus extends JavaPlugin {
     private GroupHandler groupHandler;
     @Getter
     private ProfileHandler profileHandler;
+    @Getter
+    private PermissionHandler permissionHandler;
 
     @Override
     public void onLoad() {
@@ -61,6 +66,7 @@ public final class PermiPlus extends JavaPlugin {
         mySQL.update("CREATE TABLE IF NOT EXISTS profile_groups (uuid VARCHAR(64), parent VARCHAR(32));");
         mySQL.update("CREATE TABLE IF NOT EXISTS profile_permissions (uuid VARCHAR(64), permission VARCHAR(128));");
 
+        this.permissionHandler = new PermissionHandler();
         this.groupHandler = new GroupHandler();
         this.profileHandler = new ProfileHandler();
 
@@ -81,7 +87,7 @@ public final class PermiPlus extends JavaPlugin {
 
         getServer().getScheduler().runTaskTimer(this, () -> {
             for (Player player : getServer().getOnlinePlayers()) {
-                PermissionsUtil.updatePermissions(player);
+                PermissionHandler.updatePermissions(player);
             }
         }, 40L, 40L);
     }

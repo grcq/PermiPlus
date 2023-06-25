@@ -1,5 +1,6 @@
 package dev.grcq.permiplus.group;
 
+import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import dev.grcq.permiplus.PermiPlus;
 import dev.grcq.permiplus.database.MySQL;
@@ -36,6 +37,19 @@ public class Group {
     private final List<String> permissions = new ArrayList<>();
     @NotNull
     private final List<String> parents = new ArrayList<>();
+
+    public List<String> getFullPermissions() {
+        List<String> perms = Lists.newArrayList(this.permissions);
+
+        for (String parent : this.parents) {
+            Group group = PermiPlus.getInstance().getGroupHandler().getGroup(parent);
+            for (String perm : group.getFullPermissions()) {
+                if (!perms.contains(perm)) perms.add(perm);
+            }
+        }
+
+        return perms;
+    }
 
     @SneakyThrows
     public void save() {
