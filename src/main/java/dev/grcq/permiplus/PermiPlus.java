@@ -63,7 +63,7 @@ public final class PermiPlus extends JavaPlugin {
         mySQL.update("CREATE TABLE IF NOT EXISTS group_permissions (groupName VARCHAR(32), permission VARCHAR(128));");
         mySQL.update("CREATE TABLE IF NOT EXISTS profiles (uuid VARCHAR(100), username VARCHAR(32)," +
                 " prefix VARCHAR(32) DEFAULT NULL, suffix VARCHAR(32) DEFAULT NULL);");
-        mySQL.update("CREATE TABLE IF NOT EXISTS profile_groups (uuid VARCHAR(64), parent VARCHAR(32));");
+        mySQL.update("CREATE TABLE IF NOT EXISTS profile_parents (uuid VARCHAR(64), parent VARCHAR(32));");
         mySQL.update("CREATE TABLE IF NOT EXISTS profile_permissions (uuid VARCHAR(64), permission VARCHAR(128));");
 
         this.permissionHandler = new PermissionHandler();
