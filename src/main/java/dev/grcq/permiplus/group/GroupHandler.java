@@ -40,10 +40,10 @@ public class GroupHandler {
         for (JsonElement jsonElement : array) {
             JsonObject object = (JsonObject) jsonElement;
 
-            rs = mySQL.execute("SELECT * FROM profile_parents WHERE name='" + object.get("name").getAsInt() + "';", new HashMap<>());
+            rs = mySQL.execute("SELECT * FROM group_parents WHERE groupName='" + object.get("name").getAsString() + "';", new HashMap<>());
             JsonArray parents = mySQL.toJson(rs);
 
-            rs = mySQL.execute("SELECT * FROM profile_permissions WHERE name='" + object.get("name").getAsInt() + "';", new HashMap<>());
+            rs = mySQL.execute("SELECT * FROM group_permissions WHERE groupName='" + object.get("name").getAsString() + "';", new HashMap<>());
             JsonArray perms = mySQL.toJson(rs);
 
             object.add("permissions", perms);
@@ -74,10 +74,10 @@ public class GroupHandler {
             JsonObject object = (JsonObject) array.get(0);
             if (object == null) return null;
 
-            rs = mySQL.execute("SELECT * FROM group_parents WHERE name='" + name + "';", new HashMap<>());
+            rs = mySQL.execute("SELECT * FROM group_parents WHERE groupName='" + name + "';", new HashMap<>());
             JsonArray parents = mySQL.toJson(rs);
 
-            rs = mySQL.execute("SELECT * FROM group_permissions WHERE name='" + name + "';", new HashMap<>());
+            rs = mySQL.execute("SELECT * FROM group_permissions WHERE groupName='" + name + "';", new HashMap<>());
             JsonArray perms = mySQL.toJson(rs);
 
             object.add("permissions", perms);
@@ -90,7 +90,7 @@ public class GroupHandler {
     public Group createGroup(String name) {
         if (exists(name)) return getGroup(name);
         Group group = new Group(name, name.toLowerCase(), "", "");
-        mySQL.update("INSERT INTO groups (name, displayName) VALUES ('%s', '%s');".formatted(name, name.toLowerCase()));
+        mySQL.update("INSERT INTO groups (name, displayName) VALUES ('%s', '%s');".formatted(name.toLowerCase(), name));
         return group;
     }
 

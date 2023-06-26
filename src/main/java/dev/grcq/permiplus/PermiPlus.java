@@ -57,12 +57,12 @@ public final class PermiPlus extends JavaPlugin {
 
         this.mySQL = new MySQL();
         mySQL.update("CREATE TABLE IF NOT EXISTS groups (displayName VARCHAR(64), " +
-                "name VARCHAR(32) PRIMARY KEY, prefix VARCHAR(32) DEFAULT '', suffix VARCHAR(32) DEFAULT ''," +
+                "name VARCHAR(32), prefix VARCHAR(32) DEFAULT '', suffix VARCHAR(32) DEFAULT ''," +
                 " colour VARCHAR(10) DEFAULT NULL, priority BIGINT DEFAULT 0);");
-        mySQL.update("CREATE TABLE IF NOT EXISTS group_parents (group VARCHAR(32), parent VARCHAR(32));");
-        mySQL.update("CREATE TABLE IF NOT EXISTS group_permissions (group VARCHAR(32), permission VARCHAR(128));");
-        mySQL.update("CREATE TABLE IF NOT EXISTS profiles (uuid VARCHAR(100) PRIMARY KEY, username VARCHAR(32)," +
-                " prefix VARCHAR(32) DEFAULT '', suffix VARCHAR(32) DEFAULT '');");
+        mySQL.update("CREATE TABLE IF NOT EXISTS group_parents (groupName VARCHAR(32), parent VARCHAR(32));");
+        mySQL.update("CREATE TABLE IF NOT EXISTS group_permissions (groupName VARCHAR(32), permission VARCHAR(128));");
+        mySQL.update("CREATE TABLE IF NOT EXISTS profiles (uuid VARCHAR(100), username VARCHAR(32)," +
+                " prefix VARCHAR(32) DEFAULT NULL, suffix VARCHAR(32) DEFAULT NULL);");
         mySQL.update("CREATE TABLE IF NOT EXISTS profile_groups (uuid VARCHAR(64), parent VARCHAR(32));");
         mySQL.update("CREATE TABLE IF NOT EXISTS profile_permissions (uuid VARCHAR(64), permission VARCHAR(128));");
 

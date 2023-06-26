@@ -25,7 +25,7 @@ public class ProfileHandler {
 
     public ProfileHandler() {
         this.mySQL = PermiPlus.getInstance().getMySQL();
-        if (!this.loadProfiles()) throw new RuntimeException("An error occurred attempting to load the groups.");
+        if (!this.loadProfiles()) throw new RuntimeException("An error occurred attempting to load the profiles.");
     }
 
     private boolean loadProfiles() {
@@ -33,16 +33,14 @@ public class ProfileHandler {
         ResultSet rs = mySQL.execute("SELECT * FROM profiles;", new HashMap<>());
         JsonArray array = mySQL.toJson(rs);
 
-        if (array.size() == 0) return false;
-
         List<JsonObject> objects = new ArrayList<>();
         for (JsonElement jsonElement : array) {
             JsonObject object = (JsonObject) jsonElement;
 
-            rs = mySQL.execute("SELECT * FROM profile_parents WHERE id=" + object.get("id").getAsInt() + ";", new HashMap<>());
+            rs = mySQL.execute("SELECT * FROM profile_parents WHERE uuid='" + object.get("id").getAsString() + "';", new HashMap<>());
             JsonArray parents = mySQL.toJson(rs);
 
-            rs = mySQL.execute("SELECT * FROM profile_permissions WHERE id=" + object.get("id").getAsInt() + ";", new HashMap<>());
+            rs = mySQL.execute("SELECT * FROM profile_permissions WHERE uuid='" + object.get("id").getAsString() + "';", new HashMap<>());
             JsonArray perms = mySQL.toJson(rs);
 
             object.add("permissions", perms);
@@ -90,17 +88,17 @@ public class ProfileHandler {
     @Nullable
     public Profile getProfile(String name) {
         return CompletableFuture.supplyAsync(() -> {
-            ResultSet rs = mySQL.execute("SELECT * FROM profiles WHERE name='" + name + "';", new HashMap<>());
+            ResultSet rs = mySQL.execute("SELECT * FROM profiles WHERE username='" + name + "';", new HashMap<>());
             JsonArray array = mySQL.toJson(rs);
             if (array == null || array.size() == 0) return null;
 
             JsonObject object = (JsonObject) array.get(0);
             if (object == null) return null;
 
-            rs = mySQL.execute("SELECT * FROM profile_parents WHERE name='" + name + "';", new HashMap<>());
+            rs = mySQL.execute("SELECT * FROM profile_parents WHERE uuid='" + object.get("uuid").getAsString() + "';", new HashMap<>());
             JsonArray parents = mySQL.toJson(rs);
 
-            rs = mySQL.execute("SELECT * FROM profile_permissions WHERE name='" + name + "';", new HashMap<>());
+            rs = mySQL.execute("SELECT * FROM profile_permissions WHERE uuid='" + object.get("uuid").getAsString() + "';", new HashMap<>());
             JsonArray perms = mySQL.toJson(rs);
 
             object.add("permissions", perms);
@@ -113,7 +111,7 @@ public class ProfileHandler {
     public Profile createProfile(UUID uuid, String name) {
         if (exists(uuid)) return getProfile(uuid);
         Profile group = new Profile(uuid.toString(), name);
-        mySQL.update("INSERT INTO groups (name, displayName) VALUES ('%s', '%s');".formatted(uuid.toString(), name));
+        mySQL.update("INSERT INTO profiles (uuid, username) VALUES ('%s', '%s');".formatted(uuid.toString(), name));
         return group;
     }
 

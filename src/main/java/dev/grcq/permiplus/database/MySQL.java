@@ -1,6 +1,7 @@
 package dev.grcq.permiplus.database;
 
 import com.google.gson.*;
+import dev.grcq.permiplus.PermiPlus;
 import dev.grcq.permiplus.utils.Credentials;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -121,12 +122,12 @@ public class MySQL {
             case Types.TINYINT -> Optional.of(resultSet.getBoolean(column)).map(JsonPrimitive::new);
             case Types.INTEGER ->
                 // resultSet.getInt() returns 0 in case of null, so it must be extracted with getObject and cast, then converted to a JsonPrimitive
-                    Optional.of(resultSet.getInt(column)).map(JsonPrimitive::new);
+                    Optional.ofNullable((Integer) resultSet.getObject(column)).map(JsonPrimitive::new);
             case Types.BIGINT -> Optional.of(resultSet.getLong(column)).map(JsonPrimitive::new);
             case Types.FLOAT -> Optional.of(resultSet.getFloat(column)).map(JsonPrimitive::new);
             case Types.DOUBLE -> Optional.of(resultSet.getDouble(column)).map(JsonPrimitive::new);
-            case Types.VARCHAR -> Optional.ofNullable(resultSet.getString(column)).map(JsonPrimitive::new);
-            case Types.LONGVARCHAR, Types.DATE ->
+            case Types.LONGVARCHAR, Types.VARCHAR -> Optional.ofNullable(resultSet.getString(column)).map(JsonPrimitive::new);
+            case Types.DATE ->
                     Optional.of(resultSet.getDate(column)).map(Date::toString).map(JsonPrimitive::new);
             case Types.TIME, Types.TIMESTAMP, Types.BINARY, Types.VARBINARY, Types.LONGVARBINARY, Types.NULL ->
                     Optional.empty();

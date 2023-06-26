@@ -59,15 +59,15 @@ public class Group {
                 "', suffix='" + suffix + "', colour=" + (colour != null ? "'" + colour + "'" : "NULL") + ", priority=" + priority +
                 " WHERE name='" + name + "'");
 
-        mySQL.update("DELETE FROM group_permissions WHERE group='%s'".formatted(name));
-        mySQL.update("DELETE FROM group_parents WHERE group='%s'".formatted(name));
+        mySQL.update("DELETE FROM group_permissions WHERE groupName='%s'".formatted(name));
+        mySQL.update("DELETE FROM group_parents WHERE groupName='%s'".formatted(name));
 
         for (String parent : parents) {
-            mySQL.update("INSERT INTO group_parents (group, parent) VALUES ('%s', '%s')".formatted(name, parent));
+            mySQL.update("INSERT INTO group_parents (groupName, parent) VALUES ('%s', '%s')".formatted(name, parent));
         }
 
         for (String perm : permissions) {
-            mySQL.update("INSERT INTO group_permissions(group, permission) VALUES ('%s', '%s')".formatted(name, perm));
+            mySQL.update("INSERT INTO group_permissions (groupName, permission) VALUES ('%s', '%s')".formatted(name, perm));
         }
 
     }
