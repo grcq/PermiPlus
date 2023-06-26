@@ -16,13 +16,13 @@ public class ConnectionListener {
         ProfileHandler profileHandler = PermiPlus.getInstance().getProfileHandler();
         Player player = event.getPlayer();
 
-        PermiPermissible permissible = new PermiPermissible(player);
-        PermissibleInjector.inject(player, permissible);
-
         Profile profile = profileHandler.createProfile(player.getUniqueId(), player.getName());
         profile.setUsername(player.getName());
 
         profile.save();
+
+        PermiPermissible permissible = new PermiPermissible(player);
+        PermissibleInjector.inject(player, permissible);
     }
 
 }

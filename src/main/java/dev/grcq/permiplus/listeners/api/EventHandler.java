@@ -39,7 +39,7 @@ public class EventHandler {
             try {
                 method.invoke(null, event);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }, PermiPlus.getInstance(), listener.ignoreCancelled());
     }
