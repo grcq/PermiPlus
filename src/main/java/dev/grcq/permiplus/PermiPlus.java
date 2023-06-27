@@ -3,9 +3,12 @@ package dev.grcq.permiplus;
 import cf.grcq.priveapi.chat.listener.InputListener;
 import cf.grcq.priveapi.command.CommandHandler;
 import cf.grcq.priveapi.gui.listener.GUIListener;
+import cf.grcq.priveapi.rabbitmq.RabbitMQHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.LongSerializationPolicy;
+import dev.grcq.http.IHttpServer;
+import dev.grcq.http.impl.PermiHttpServer;
 import dev.grcq.permiplus.commands.parameters.ChatColorParameterType;
 import dev.grcq.permiplus.commands.parameters.GroupParameterType;
 import dev.grcq.permiplus.database.MySQL;
@@ -16,6 +19,7 @@ import dev.grcq.permiplus.listeners.api.EventHandler;
 import dev.grcq.permiplus.inject.permissible.PermiPermissible;
 import dev.grcq.permiplus.profile.ProfileHandler;
 import dev.grcq.permiplus.permission.PermissionHandler;
+import dev.grcq.permiplus.rabbitmq.ServerListener;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.ChatColor;
@@ -41,6 +45,11 @@ public final class PermiPlus extends JavaPlugin {
     private ProfileHandler profileHandler;
     @Getter
     private PermissionHandler permissionHandler;
+    @Getter
+    private RabbitMQHandler rabbitMQHandler;
+
+    @Getter
+    private IHttpServer httpServer;
 
     @Override
     public void onLoad() {
@@ -70,6 +79,9 @@ public final class PermiPlus extends JavaPlugin {
         this.groupHandler = new GroupHandler();
         this.profileHandler = new ProfileHandler();
 
+        this.httpServer = new PermiHttpServer();
+        this.httpServer.start();
+
         CommandHandler.registerParameter(ChatColor.class, new ChatColorParameterType());
         CommandHandler.registerParameter(Group.class, new GroupParameterType());
         CommandHandler.registerAll(this);
@@ -78,6 +90,12 @@ public final class PermiPlus extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new InputListener(), this);
         EventHandler eventListener = new EventHandler();
         eventListener.registerAll(this);
+
+        if (getConfig().getBoolean("rabbitmq.enabled")) {
+            this.rabbitMQHandler = new RabbitMQHandler(getConfig().getString("rabbitmq.address"), getConfig().getInt("rabbitmq.port"),
+                    getConfig().getString("rabbitmq.user"), getConfig().getString("rabbitmq.password"), "permiplus_queue");
+            rabbitMQHandler.registerListener(new ServerListener());
+        }
 
         this.getDataFolder().mkdirs();
         File file = new File(this.getDataFolder(), "data.yml");

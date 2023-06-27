@@ -37,10 +37,10 @@ public class ProfileHandler {
         for (JsonElement jsonElement : array) {
             JsonObject object = (JsonObject) jsonElement;
 
-            rs = mySQL.execute("SELECT * FROM profile_parents WHERE uuid='" + object.get("id").getAsString() + "';", new HashMap<>());
+            rs = mySQL.execute("SELECT * FROM profile_parents WHERE uuid='" + object.get("uuid").getAsString() + "';", new HashMap<>());
             JsonArray parents = mySQL.toJson(rs);
 
-            rs = mySQL.execute("SELECT * FROM profile_permissions WHERE uuid='" + object.get("id").getAsString() + "';", new HashMap<>());
+            rs = mySQL.execute("SELECT * FROM profile_permissions WHERE uuid='" + object.get("uuid").getAsString() + "';", new HashMap<>());
             JsonArray perms = mySQL.toJson(rs);
 
             object.add("permissions", perms);
