@@ -80,7 +80,7 @@ public final class PermiPlus extends JavaPlugin {
         this.profileHandler = new ProfileHandler();
 
         this.httpServer = new PermiHttpServer();
-        this.httpServer.start();
+        //this.httpServer.start();
 
         CommandHandler.registerParameter(ChatColor.class, new ChatColorParameterType());
         CommandHandler.registerParameter(Group.class, new GroupParameterType());
