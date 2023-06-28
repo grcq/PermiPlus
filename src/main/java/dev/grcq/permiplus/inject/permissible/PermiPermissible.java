@@ -14,8 +14,8 @@ public class PermiPermissible extends PermissibleBase {
     public PermiPermissible(Player player) {
         super(player);
 
-        this.player = player;
         this.attachment = player.addAttachment(PermiPlus.getInstance());
+        this.player = player;
 
         this.recalculatePermissions();
     }

@@ -1,3 +1,6 @@
+groups:
+  default-group-name: 'Default'
+
 mysql:
 
   database: 'minecraft'

@@ -15,6 +15,7 @@ import dev.grcq.permiplus.database.MySQL;
 import dev.grcq.permiplus.group.Group;
 import dev.grcq.permiplus.group.GroupHandler;
 import dev.grcq.permiplus.inject.permissible.PermissibleInjector;
+import dev.grcq.permiplus.listeners.ConnectionListener;
 import dev.grcq.permiplus.listeners.api.EventHandler;
 import dev.grcq.permiplus.inject.permissible.PermiPermissible;
 import dev.grcq.permiplus.profile.ProfileHandler;
@@ -89,7 +90,7 @@ public final class PermiPlus extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new GUIListener(), this);
         this.getServer().getPluginManager().registerEvents(new InputListener(), this);
         EventHandler eventListener = new EventHandler();
-        eventListener.registerAll(this);
+        eventListener.register(ConnectionListener.class);
 
         if (getConfig().getBoolean("rabbitmq.enabled")) {
             this.rabbitMQHandler = new RabbitMQHandler(getConfig().getString("rabbitmq.address"), getConfig().getInt("rabbitmq.port"),

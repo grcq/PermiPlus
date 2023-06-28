@@ -52,10 +52,14 @@ public class MainCommands {
     @Command(names = {"permi group delete"}, permission = "permiplus.command.delete")
     public static void groupDelete(CommandSender sender, @Param(name = "name") Group group) {
         GroupHandler groupHandler = PermiPlus.getInstance().getGroupHandler();
+        if (group.getName().equalsIgnoreCase(PermiPlus.getInstance().getConfig().getString("groups.default-group-name"))) {
+            sender.sendMessage(Util.format("&cError: You cannot delete the default group!"));
+            return;
+        }
 
         PermiPlus.getInstance().getMySQL().update("DELETE FROM groups WHERE name='%s'".formatted(group.getName()));
-        PermiPlus.getInstance().getMySQL().update("DELETE FROM group_permissions WHERE name='%s'".formatted(group.getName()));
-        PermiPlus.getInstance().getMySQL().update("DELETE FROM group_parents WHERE name='%s'".formatted(group.getName()));
+        PermiPlus.getInstance().getMySQL().update("DELETE FROM group_permissions WHERE groupName='%s'".formatted(group.getName()));
+        PermiPlus.getInstance().getMySQL().update("DELETE FROM group_parents WHERE groupName='%s'".formatted(group.getName()));
         sender.sendMessage(Util.format("&aSuccess! The group '&f%s&a' was successfully deleted.".formatted((group.getColour() == null ? "" : group.getColour()) + group.getName())));
 
         groupHandler.update();
