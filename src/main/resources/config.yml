@@ -12,7 +12,7 @@ rabbitmq:
   enabled: false # Set to true to use web interface!
 
   address: 127.0.0.1
-  port: 6379
+  port: 5672
 
   user: guest
   password: 'guest'
