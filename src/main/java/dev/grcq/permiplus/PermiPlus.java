@@ -7,17 +7,16 @@ import cf.grcq.priveapi.rabbitmq.RabbitMQHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.LongSerializationPolicy;
-import dev.grcq.http.IHttpServer;
-import dev.grcq.http.impl.PermiHttpServer;
+import dev.grcq.http.HTTPServer;
+import dev.grcq.http.OLD.IHttpServer;
+import dev.grcq.http.OLD.impl.PermiHttpServer;
 import dev.grcq.permiplus.commands.parameters.ChatColorParameterType;
 import dev.grcq.permiplus.commands.parameters.GroupParameterType;
 import dev.grcq.permiplus.database.MySQL;
 import dev.grcq.permiplus.group.Group;
 import dev.grcq.permiplus.group.GroupHandler;
-import dev.grcq.permiplus.inject.permissible.PermissibleInjector;
 import dev.grcq.permiplus.listeners.ConnectionListener;
 import dev.grcq.permiplus.listeners.api.EventHandler;
-import dev.grcq.permiplus.inject.permissible.PermiPermissible;
 import dev.grcq.permiplus.profile.ProfileHandler;
 import dev.grcq.permiplus.permission.PermissionHandler;
 import dev.grcq.permiplus.rabbitmq.ServerListener;
@@ -25,8 +24,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permissible;
-import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -49,6 +46,7 @@ public final class PermiPlus extends JavaPlugin {
     @Getter
     private RabbitMQHandler rabbitMQHandler;
 
+    // OLD
     @Getter
     private IHttpServer httpServer;
 
@@ -80,8 +78,20 @@ public final class PermiPlus extends JavaPlugin {
         this.groupHandler = new GroupHandler();
         this.profileHandler = new ProfileHandler();
 
+
+        // OLD
         this.httpServer = new PermiHttpServer();
         //this.httpServer.start();
+
+        // NEW
+        HTTPServer server = new HTTPServer(3746)
+                .get("/api/v1/groups/fetch_all", (ctx) -> {
+                    ctx.result("Working!");
+                })
+                .get("/", (ctx) -> {
+                    ctx.result("A");
+        });
+        server.start();
 
         CommandHandler.registerParameter(ChatColor.class, new ChatColorParameterType());
         CommandHandler.registerParameter(Group.class, new GroupParameterType());

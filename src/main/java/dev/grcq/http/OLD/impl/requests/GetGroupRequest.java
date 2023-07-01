@@ -1,19 +1,17 @@
-package dev.grcq.http.impl.requests;
+package dev.grcq.http.OLD.impl.requests;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
-import dev.grcq.http.IHttpRequest;
-import dev.grcq.http.Path;
-import dev.grcq.http.RequestType;
-import dev.grcq.http.Type;
+import dev.grcq.http.OLD.IHttpRequest;
+import dev.grcq.http.OLD.Path;
+import dev.grcq.http.OLD.RequestType;
+import dev.grcq.http.OLD.Type;
 import dev.grcq.permiplus.PermiPlus;
 import dev.grcq.permiplus.group.Group;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.ResultSet;
-import java.util.HashMap;
 import java.util.List;
 
 @Type(RequestType.GET)

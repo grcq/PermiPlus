@@ -50,10 +50,12 @@ public class PermissionHandler {
             PermissionAttachment attachment = player.addAttachment(PermiPlus.getInstance());
 
             Profile profile = PermiPlus.getInstance().getProfileHandler().getProfile(player.getUniqueId());
+            assert profile != null;
             List<String> permissions = Lists.newArrayList(profile.getPermissions());
 
             for (String parent : profile.getParents()) {
                 Group group = PermiPlus.getInstance().getGroupHandler().getGroup(parent);
+                assert group != null;
                 for (String perm : group.getFullPermissions()) {
                     if (!permissions.contains(perm)) permissions.add(perm);
                 }

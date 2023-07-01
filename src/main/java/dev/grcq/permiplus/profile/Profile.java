@@ -1,7 +1,9 @@
 package dev.grcq.permiplus.profile;
 
+import com.google.common.collect.Lists;
 import dev.grcq.permiplus.PermiPlus;
 import dev.grcq.permiplus.database.MySQL;
+import dev.grcq.permiplus.group.Group;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,19 @@ public class Profile {
     private final List<String> parents = new ArrayList<>();
     @NotNull
     private final List<String> permissions = new ArrayList<>();
+
+    public List<String> getFullPermissions() {
+        List<String> perms = Lists.newArrayList(this.permissions);
+
+        for (String parent : this.parents) {
+            Group group = PermiPlus.getInstance().getGroupHandler().getGroup(parent);
+            for (String perm : group.getFullPermissions()) {
+                if (!perms.contains(perm)) perms.add(perm);
+            }
+        }
+
+        return perms;
+    }
 
     @NotNull
     public UUID getUUID() {

@@ -1,10 +1,9 @@
-package dev.grcq.http;
+package dev.grcq.http.OLD;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 
 public interface IHttpServer {
 
